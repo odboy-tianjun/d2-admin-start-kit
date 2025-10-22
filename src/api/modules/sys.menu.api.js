@@ -30,10 +30,10 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
         ]
         const header = aside
         const routes = [
-          { path: 'page1', name: 'page1', meta: { title: '单页面', auth: true }, component: 'demo/page1' },
-          { path: 'page2', name: 'page2', meta: { title: '页面 2', auth: true }, component: 'demo/page2' },
-          { path: 'page3', name: 'page3', meta: { title: '页面 3', auth: true }, component: 'demo/page3' },
-          { path: 'page4', name: 'page4', meta: { title: '页面 4', auth: true }, component: 'demo/page4' }
+          { path: '/page1', name: 'page1', meta: { title: '单页面', auth: true }, component: 'demo/page1' },
+          { path: '/page2', name: 'page2', meta: { title: '页面 2', auth: true }, component: 'demo/page2' },
+          { path: '/page3', name: 'page3', meta: { title: '页面 3', auth: true }, component: 'demo/page3' },
+          { path: '/page4', name: 'page4', meta: { title: '页面 4', auth: true }, component: 'demo/page4' }
         ]
         return tools.responseSuccess({ header, aside, routes })
       })
