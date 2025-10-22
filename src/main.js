@@ -9,8 +9,10 @@ import store from '@/store/index'
 
 // 菜单和路由设置
 import router from './router'
-import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
+
+// 全局提前加载字体图标样式，避免首次渲染闪烁
+import '@/components/d2-icon/font-awesome-4.7.0/css/font-awesome.min.css'
 
 // 核心插件
 Vue.use(d2Admin)
@@ -23,12 +25,6 @@ new Vue({
   created () {
     // 处理路由 得到每一级的路由设置
     this.$store.commit('d2admin/page/init', frameInRoutes)
-    // 设置顶栏菜单
-    this.$store.commit('d2admin/menu/headerSet', menuHeader)
-    // 设置侧边栏菜单
-    this.$store.commit('d2admin/menu/asideSet', menuAside)
-    // 初始化菜单搜索功能
-    this.$store.commit('d2admin/search/init', menuHeader)
   },
   mounted () {
     // 展示系统信息

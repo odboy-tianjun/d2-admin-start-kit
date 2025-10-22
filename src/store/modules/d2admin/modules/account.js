@@ -13,7 +13,7 @@ export default {
      * @param {Object} payload password {String} 密码
      * @param {Object} payload route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
      */
-    async login ({ dispatch }, {
+    async login ({ dispatch, commit }, {
       username = '',
       password = ''
     } = {}) {
@@ -29,6 +29,31 @@ export default {
       await dispatch('d2admin/user/set', { name: res.name }, { root: true })
       // 用户登录后从持久化数据加载一系列的设置
       await dispatch('load')
+      // 登录成功后，从服务端获取菜单与路由并设置
+      const menuRes = await api.SYS_MENU()
+      const { header = [], aside = [], routes = [] } = menuRes
+      // 设置菜单与搜索池
+      await dispatch('d2admin/menu/asideCollapseSet', false, { root: true })
+      commit('d2admin/menu/headerSet', header, { root: true })
+      commit('d2admin/menu/asideSet', aside, { root: true })
+      commit('d2admin/search/init', header, { root: true })
+      // 动态注册路由（仅注册框架内的子路由）
+      const _import = require('@/libs/util.import.' + process.env.NODE_ENV)
+      const layoutHeaderAside = require('@/layout/header-aside').default
+      const dynamicChildren = routes.map(r => ({
+        path: r.path,
+        name: r.name,
+        meta: r.meta || {},
+        component: _import(r.component)
+      }))
+      router.addRoutes([{ path: '/', component: layoutHeaderAside, children: dynamicChildren }])
+      // 重新初始化 page 池，确保标签页与新路由一致
+      const { frameInRoutes } = require('@/router/routes')
+      const dynamicFrameIn = JSON.parse(JSON.stringify(frameInRoutes))
+      if (dynamicFrameIn && dynamicFrameIn[0] && Array.isArray(dynamicFrameIn[0].children)) {
+        dynamicFrameIn[0].children = dynamicFrameIn[0].children.concat(dynamicChildren)
+      }
+      commit('d2admin/page/init', dynamicFrameIn, { root: true })
     },
     /**
      * @description 注销用户并返回登录页面
